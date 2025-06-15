@@ -1,18 +1,21 @@
 {
-  "_fancybox-BwwNdLp0.js": {
-    "file": "assets/fancybox-BwwNdLp0.js",
+  "_fancybox-l0sNRNKZ.js": {
+    "file": "assets/fancybox-l0sNRNKZ.js",
     "name": "fancybox"
   },
-  "_fetch-DP0ZXCkA.js": {
-    "file": "assets/fetch-DP0ZXCkA.js",
-    "name": "fetch"
+  "_format-B7a5NblC.js": {
+    "file": "assets/format-B7a5NblC.js",
+    "name": "format"
   },
-  "_pdf-DPi8upcZ.js": {
-    "file": "assets/pdf-DPi8upcZ.js",
-    "name": "pdf"
+  "_pdf-CWRAb0pv.js": {
+    "file": "assets/pdf-CWRAb0pv.js",
+    "name": "pdf",
+    "imports": [
+      "_vendor-Bt-ajNKG.js"
+    ]
   },
-  "_vendor-DLuc_007.js": {
-    "file": "assets/vendor-DLuc_007.js",
+  "_vendor-Bt-ajNKG.js": {
+    "file": "assets/vendor-Bt-ajNKG.js",
     "name": "vendor"
   },
   "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff": {
@@ -28,17 +31,17 @@
     "src": "public/images/bg-themes/body-background.webp"
   },
   "resources/css/app.css": {
-    "file": "assets/app-dEkdA-zH.css",
+    "file": "assets/app-C9Si0fN-.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/auth.css": {
-    "file": "assets/auth-Bv5Dt7AZ.css",
+    "file": "assets/auth-CTwwiZMO.css",
     "src": "resources/css/auth.css",
     "isEntry": true
   },
   "resources/css/dashboard.css": {
-    "file": "assets/dashboard-FAJSAg9e.css",
+    "file": "assets/dashboard-Fxm2P7mN.css",
     "src": "resources/css/dashboard.css",
     "isEntry": true
   },
@@ -49,12 +52,12 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-CCVpfbIe.js",
+    "file": "assets/app-7D0asImK.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor-DLuc_007.js"
+      "_vendor-Bt-ajNKG.js"
     ]
   },
   "resources/js/auth.js": {
@@ -64,30 +67,29 @@
     "isEntry": true
   },
   "resources/js/dashboard.js": {
-    "file": "assets/dashboard-DkUUfKCO.js",
+    "file": "assets/dashboard-Db6gMYeU.js",
     "name": "dashboard",
     "src": "resources/js/dashboard.js",
     "isEntry": true,
     "imports": [
-      "_pdf-DPi8upcZ.js",
-      "_vendor-DLuc_007.js"
+      "_pdf-CWRAb0pv.js",
+      "_vendor-Bt-ajNKG.js"
     ],
     "dynamicImports": [
-      "resources/js/pages/analisis_potensi.js",
-      "resources/js/pages/cabors.js",
       "resources/js/pages/dashboard.js",
-      "resources/js/pages/data_pokok.js",
-      "resources/js/pages/master/cabors.js",
-      "resources/js/pages/master/desas.js",
-      "resources/js/pages/master/jenis_sarpras.js",
-      "resources/js/pages/master/kecamatans.js",
+      "resources/js/pages/master/customers.js",
+      "resources/js/pages/master/products.js",
       "resources/js/pages/profile.js",
-      "resources/js/pages/sarpras.js",
       "resources/js/pages/setting/approval_routes.js",
       "resources/js/pages/setting/menu.js",
       "resources/js/pages/setting/permissions.js",
       "resources/js/pages/setting/roles.js",
-      "resources/js/pages/setting/users.js"
+      "resources/js/pages/setting/users.js",
+      "resources/js/pages/transaksi/delivery_orders.js",
+      "resources/js/pages/transaksi/sales_orders.js"
+    ],
+    "css": [
+      "assets/dashboard-DmDfXN9T.css"
     ]
   },
   "resources/js/landing.js": {
@@ -96,58 +98,22 @@
     "src": "resources/js/landing.js",
     "isEntry": true
   },
-  "resources/js/pages/analisis_potensi.js": {
-    "file": "assets/analisis_potensi-C6qUM7c7.js",
-    "name": "analisis_potensi",
-    "src": "resources/js/pages/analisis_potensi.js",
-    "isDynamicEntry": true
-  },
-  "resources/js/pages/cabors.js": {
-    "file": "assets/cabors-DqTgW8YR.js",
-    "name": "cabors",
-    "src": "resources/js/pages/cabors.js",
-    "isDynamicEntry": true,
-    "imports": [
-      "_fancybox-BwwNdLp0.js"
-    ]
-  },
   "resources/js/pages/dashboard.js": {
     "file": "assets/dashboard-BavSDrWp.js",
     "name": "dashboard",
     "src": "resources/js/pages/dashboard.js",
     "isDynamicEntry": true
   },
-  "resources/js/pages/data_pokok.js": {
-    "file": "assets/data_pokok-ioem4lXE.js",
-    "name": "data_pokok",
-    "src": "resources/js/pages/data_pokok.js",
+  "resources/js/pages/master/customers.js": {
+    "file": "assets/customers-khW6VIwx.js",
+    "name": "customers",
+    "src": "resources/js/pages/master/customers.js",
     "isDynamicEntry": true
   },
-  "resources/js/pages/master/cabors.js": {
-    "file": "assets/cabors-ia-ApN0w.js",
-    "name": "cabors",
-    "src": "resources/js/pages/master/cabors.js",
-    "isDynamicEntry": true
-  },
-  "resources/js/pages/master/desas.js": {
-    "file": "assets/desas-DIFc7Cxl.js",
-    "name": "desas",
-    "src": "resources/js/pages/master/desas.js",
-    "isDynamicEntry": true,
-    "imports": [
-      "_fetch-DP0ZXCkA.js"
-    ]
-  },
-  "resources/js/pages/master/jenis_sarpras.js": {
-    "file": "assets/jenis_sarpras-CHkplCGY.js",
-    "name": "jenis_sarpras",
-    "src": "resources/js/pages/master/jenis_sarpras.js",
-    "isDynamicEntry": true
-  },
-  "resources/js/pages/master/kecamatans.js": {
-    "file": "assets/kecamatans-BzunOjK9.js",
-    "name": "kecamatans",
-    "src": "resources/js/pages/master/kecamatans.js",
+  "resources/js/pages/master/products.js": {
+    "file": "assets/products-S5zq_Kc6.js",
+    "name": "products",
+    "src": "resources/js/pages/master/products.js",
     "isDynamicEntry": true
   },
   "resources/js/pages/profile.js": {
@@ -156,43 +122,55 @@
     "src": "resources/js/pages/profile.js",
     "isDynamicEntry": true
   },
-  "resources/js/pages/sarpras.js": {
-    "file": "assets/sarpras-CY2H2DBx.js",
-    "name": "sarpras",
-    "src": "resources/js/pages/sarpras.js",
-    "isDynamicEntry": true,
-    "imports": [
-      "_fetch-DP0ZXCkA.js"
-    ]
-  },
   "resources/js/pages/setting/approval_routes.js": {
-    "file": "assets/approval_routes-DLP-SUXE.js",
+    "file": "assets/approval_routes-BRpHSx0a.js",
     "name": "approval_routes",
     "src": "resources/js/pages/setting/approval_routes.js",
     "isDynamicEntry": true
   },
   "resources/js/pages/setting/menu.js": {
-    "file": "assets/menu-D_fO6DFM.js",
+    "file": "assets/menu-DPa8KqAi.js",
     "name": "menu",
     "src": "resources/js/pages/setting/menu.js",
     "isDynamicEntry": true
   },
   "resources/js/pages/setting/permissions.js": {
-    "file": "assets/permissions-HqQVFY_5.js",
+    "file": "assets/permissions-DMypEkuT.js",
     "name": "permissions",
     "src": "resources/js/pages/setting/permissions.js",
     "isDynamicEntry": true
   },
   "resources/js/pages/setting/roles.js": {
-    "file": "assets/roles-BGZx5yyp.js",
+    "file": "assets/roles-C8X3VKnT.js",
     "name": "roles",
     "src": "resources/js/pages/setting/roles.js",
     "isDynamicEntry": true
   },
   "resources/js/pages/setting/users.js": {
-    "file": "assets/users-C6SIcgoH.js",
+    "file": "assets/users-ph0Me27y.js",
     "name": "users",
     "src": "resources/js/pages/setting/users.js",
     "isDynamicEntry": true
+  },
+  "resources/js/pages/transaksi/delivery_orders.js": {
+    "file": "assets/delivery_orders-BH0wMPtJ.js",
+    "name": "delivery_orders",
+    "src": "resources/js/pages/transaksi/delivery_orders.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_format-B7a5NblC.js"
+    ]
+  },
+  "resources/js/pages/transaksi/sales_orders.js": {
+    "file": "assets/sales_orders-BPZmdLCC.js",
+    "name": "sales_orders",
+    "src": "resources/js/pages/transaksi/sales_orders.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/dashboard.js",
+      "_format-B7a5NblC.js",
+      "_pdf-CWRAb0pv.js",
+      "_vendor-Bt-ajNKG.js"
+    ]
   }
 }

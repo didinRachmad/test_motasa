@@ -1,1 +1,0 @@
-async function s(r,e={}){const o={method:"GET",headers:{Accept:"application/json","X-Requested-With":"XMLHttpRequest","X-CSRF-TOKEN":window.csrfToken},...e};try{const t=await fetch(r,o);if(!t.ok)throw new Error(`Error: ${t.status} - ${t.statusText}`);return await t.json()}catch(t){throw console.error("Fetch error:",t),t}}export{s as f};
