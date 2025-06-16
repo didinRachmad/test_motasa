@@ -8,7 +8,7 @@
             @yield('dashboard-content')
         </div>
     </main>
-    @include('components.switcher')
+    {{-- @include('components.switcher') --}}
 
     @vite(['resources/css/dashboard.css', 'resources/js/dashboard.js'])
 @endsection

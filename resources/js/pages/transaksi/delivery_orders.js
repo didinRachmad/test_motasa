@@ -456,10 +456,10 @@ class DeliveryOrdersPage {
 
                 // reset isi tabel
                 this.detailWrapper.innerHTML = `
-        <div class="text-center text-muted py-3">
-          Tidak ada detail yang ditampilkan.
-        </div>
-      `;
+                    <div class="text-center alert alert-warning rounded-4">
+                        Tidak ada detail yang ditampilkan.
+                    </div>
+                `;
             });
     }
 

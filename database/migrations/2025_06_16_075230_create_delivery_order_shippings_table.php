@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('courier_name');
             $table->string('courier_service_name');
             $table->string('shipment_duration_range')->nullable();
-            $table->integer('price'); // harga dalam rupiah
+            $table->integer('price');
             $table->timestamps();
         });
     }

@@ -102,7 +102,7 @@ class DeliveryOrdersController extends Controller
 
     public function show(DeliveryOrder $deliveryOrder)
     {
-        $deliveryOrder->load(['sales_order.customer', 'details.product']);
+        $deliveryOrder->load(['sales_order.customer', 'details.product', 'shippings']); // ← tambahkan ini
 
         $role = Auth::user()->roles->first();
         if (!$role) {
@@ -115,7 +115,6 @@ class DeliveryOrdersController extends Controller
 
         return view('transaksi.delivery_orders.show', compact('deliveryOrder', 'approvalRoute'));
     }
-
 
     public function create()
     {

@@ -64,8 +64,72 @@
                                             {{ __('Masuk') }}
                                         </button>
                                     </div>
+                                    <div class="text-center mt-3">
+                                        <button type="button" class="btn btn-info btn-sm rounded-4" data-bs-toggle="modal"
+                                            data-bs-target="#userListModal">
+                                            Lihat Daftar User
+                                        </button>
+                                    </div>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="userListModal" tabindex="-1" aria-labelledby="userListModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                            <div class="modal-content rounded-4">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="userListModalLabel">Daftar User Tersedia</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Tutup"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-sm align-middle">
+                                            <thead class="table-light text-center">
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Nama</th>
+                                                    <th>Email</th>
+                                                    <th>Password</th>
+                                                    <th>Role</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php $index = 1; @endphp
+                                                @php $index = 1; @endphp
+                                                @foreach (\App\Models\User::with('roles')->get() as $user)
+                                                    <tr>
+                                                        <td class="text-center">{{ $index++ }}</td>
+                                                        <td>{{ $user->name }}</td>
+                                                        <td>{{ $user->email }}</td>
+                                                        <td>
+                                                            @php
+                                                                $defaultPasswords = [
+                                                                    'admin' => 'admin123',
+                                                                    'user' => 'user123',
+                                                                    'kasir' => 'kasir123',
+                                                                    'manager' => 'manager123',
+                                                                ];
+                                                                $roleName = strtolower(
+                                                                    $user->roles->first()?->name ?? '',
+                                                                );
+                                                                $passwordDisplay =
+                                                                    $defaultPasswords[$roleName] ?? '123456';
+                                                            @endphp
+                                                            <code>{{ $passwordDisplay }}</code>
+                                                        </td>
+                                                        <td>{{ $user->roles->first()?->name ?? '-' }}</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {{-- <p class="text-muted small mt-2">⚠️ Password ditampilkan hanya jika diset default.
+                                        Silakan sesuaikan jika tidak sesuai.</p> --}}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

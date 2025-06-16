@@ -171,7 +171,7 @@
 <h5>Detail Produk</h5>
 <div id="so-details-wrapper">
     @if (empty($details))
-        <div class="text-center text-muted py-3">
+        <div class="text-center alert alert-warning rounded-4">
             Tidak ada detail yang ditampilkan.
         </div>
     @else

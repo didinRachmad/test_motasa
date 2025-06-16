@@ -17,11 +17,7 @@ return new class extends Migration
             $table->foreignId('sales_order_id')
                 ->constrained('sales_orders')
                 ->onDelete('restrict');
-            $table->date('tanggal')->nullable(); // tanggal DO, bukan SO
-            // $table->string('courier_name')->nullable();     // nama ekspedisi, misal: JNE, Sicepat, dll
-            // $table->string('service_type')->nullable();     // misal: REG, OKE, YES
-            // $table->decimal('harga_ongkir', 12, 2)->default(0);
-
+            $table->date('tanggal')->nullable();
             $table->integer('total_qty')->default(0);
             $table->decimal('total_diskon', 12, 2)->default(0);
             $table->decimal('grand_total', 12, 2)->default(0);

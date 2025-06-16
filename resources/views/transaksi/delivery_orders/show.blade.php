@@ -92,7 +92,38 @@
                 <div class="col-sm-9">{{ $deliveryOrder->keterangan ?? '-' }}</div>
             </div>
 
-            {{-- Detail --}}
+            {{-- Detail Shipping --}}
+            <h6 class="fw-bold mt-4 mb-3">Ongkos Kirim</h6>
+            @if ($deliveryOrder->shippings->count())
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-light text-center">
+                            <tr>
+                                <th>Kurir</th>
+                                <th>Layanan</th>
+                                <th>Estimasi</th>
+                                <th>Harga</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($deliveryOrder->shippings as $shipping)
+                                <tr>
+                                    <td>{{ $shipping->courier_name }}</td>
+                                    <td>{{ $shipping->courier_service_name }}</td>
+                                    <td>{{ $shipping->shipment_duration_range ?? '-' }} hari</td>
+                                    <td class="text-end">{{ number_format($shipping->price, 0, ',', '.') }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="text-center alert alert-warning rounded-4">
+                    Tidak ada data ongkos kirim yang tersimpan.
+                </div>
+            @endif
+
+            {{-- Detail Produk --}}
             <h6 class="fw-bold mt-4 mb-3">Detail Produk</h6>
             <div class="table-responsive">
                 <table class="table table-sm table-bordered">
