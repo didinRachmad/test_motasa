@@ -116,7 +116,7 @@
                                                                     $user->roles->first()?->name ?? '',
                                                                 );
                                                                 $passwordDisplay =
-                                                                    $defaultPasswords[$roleName] ?? '123456';
+                                                                    $defaultPasswords[$roleName] ?? '12345678';
                                                             @endphp
                                                             <code>{{ $passwordDisplay }}</code>
                                                         </td>
