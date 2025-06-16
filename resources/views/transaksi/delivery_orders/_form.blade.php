@@ -144,7 +144,23 @@
             </div>
         </div>
         <div class="row gy-1 justify-content-center">
+            <input type="hidden" name="shippings" id="shippings-data" value="">
+
             <div id="harga_ongkir_list" class="mt-3"></div>
+
+            @php
+                $shippingArray = $shippings->map(function ($item) {
+                    return [
+                        'courier_code' => $item->courier_code,
+                        'courier_name' => $item->courier_name,
+                        'courier_service_name' => $item->courier_service_name,
+                        'shipment_duration_range' => $item->shipment_duration_range,
+                        'price' => $item->price,
+                    ];
+                });
+            @endphp
+
+            <div id="shipping-init-data" data-shippings='@json($shippingArray)'></div>
         </div>
     </div>
 </div>

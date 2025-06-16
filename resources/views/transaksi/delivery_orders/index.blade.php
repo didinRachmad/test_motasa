@@ -20,7 +20,7 @@
                     <div class="table-responsive">
                         <table id="datatables" data-url="{{ route('transaksi_delivery_orders.data') }}"
                             class="table table-sm align-middle table-striped table-bordered">
-                            <thead class="table-light">
+                            <thead class="bg-gd">
                                 <tr>
                                     <th>No</th>
                                     <th>No DO</th>

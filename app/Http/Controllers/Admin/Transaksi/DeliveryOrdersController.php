@@ -124,17 +124,42 @@ class DeliveryOrdersController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'tanggal'            => 'required|date',
-            'sales_order_id'        => 'required|exists:customers,id',
-            'origin' => 'nullable|string|max:255',
-            'origin_name' => 'nullable|string|max:255',
-            'destination' => 'nullable|string|max:255',
-            'destination_name' => 'nullable|string|max:255',
-            'detail'             => 'required|array',
-            'detail.*.product_id' => 'required|exists:products,id',
-            'detail.*.qty'       => 'nullable|integer|min:0',
+        $validated = $request->validate([
+            'tanggal'                  => 'required|date',
+            'sales_order_id'           => 'required|exists:customers,id',
+            'origin'                   => 'nullable|string|max:255',
+            'origin_name'              => 'nullable|string|max:255',
+            'destination'              => 'nullable|string|max:255',
+            'destination_name'         => 'nullable|string|max:255',
+            'detail'                   => 'required|array',
+            'detail.*.product_id'      => 'required|exists:products,id',
+            'detail.*.qty'             => 'nullable|integer|min:0',
+
+            'shippings'                => 'nullable|string', // validasi awal sebagai string
         ]);
+
+        $shippings = [];
+        if (!empty($validated['shippings'])) {
+            $shippings = json_decode($validated['shippings'], true);
+
+
+            if (!is_array($shippings)) {
+                return back()->withErrors(['shippings' => 'Format data shipping tidak valid.'])->withInput();
+            }
+
+            foreach ($shippings as $i => $shipping) {
+                if (
+                    empty($shipping['courier_code']) ||
+                    empty($shipping['courier_name']) ||
+                    empty($shipping['courier_service_name']) ||
+                    !isset($shipping['price'])
+                ) {
+                    return back()->withErrors([
+                        'shippings' => "Data shipping baris ke-{$i} tidak lengkap."
+                    ])->withInput();
+                }
+            }
+        }
 
         DB::beginTransaction();
         try {
@@ -142,40 +167,36 @@ class DeliveryOrdersController extends Controller
             $totalDiskon = 0;
             $grandTotal = 0;
 
-            $tanggal = Carbon::parse($request->tanggal);
+            $tanggal = Carbon::parse($validated['tanggal']);
             $no_do = $this->generateNoDO($tanggal);
 
             $deliveryOrder = DeliveryOrder::create([
-                'no_do'             => $no_do,
-                'tanggal'           => $request->tanggal,
-                'sales_order_id'       => $request->sales_order_id,
-                'origin'           => $request->origin,
-                'origin_name'           => $request->origin_name,
-                'destination'           => $request->destination,
-                'destination_name'           => $request->destination_name,
+                'no_do'              => $no_do,
+                'tanggal'            => $validated['tanggal'],
+                'sales_order_id'     => $validated['sales_order_id'],
+                'origin'             => $validated['origin'],
+                'origin_name'        => $validated['origin_name'],
+                'destination'        => $validated['destination'],
+                'destination_name'   => $validated['destination_name'],
             ]);
 
-            foreach ($request->detail as $productId => $detail) {
-                if (empty($detail['qty']) || $detail['qty'] == 0) {
-                    continue;
-                }
+            foreach ($validated['detail'] as $index => $detail) {
+                if (empty($detail['qty']) || $detail['qty'] == 0) continue;
 
-                $product = Product::findOrFail($productId); // gunakan langsung $productId
+                $product = Product::findOrFail($detail['product_id']);
                 $harga = $product->harga;
                 $qty = (int) $detail['qty'];
                 $subtotal = $harga * $qty;
-
-                // Hitung diskon (contoh: diskon 5% jika qty >= 20)
                 $diskon = $qty >= 20 ? $subtotal * 0.05 : 0;
                 $finalSubtotal = $subtotal - $diskon;
 
                 DeliveryOrderDetail::create([
                     'delivery_order_id' => $deliveryOrder->id,
-                    'product_id'     => $product->id,
-                    'qty'            => $qty,
-                    'harga'          => $harga,
-                    'diskon'         => $diskon,
-                    'subtotal'       => $finalSubtotal,
+                    'product_id'        => $product->id,
+                    'qty'               => $qty,
+                    'harga'             => $harga,
+                    'diskon'            => $diskon,
+                    'subtotal'          => $finalSubtotal,
                 ]);
 
                 $totalQty += $qty;
@@ -183,12 +204,22 @@ class DeliveryOrdersController extends Controller
                 $grandTotal += $finalSubtotal;
             }
 
-            // Simpan total di delivery order
             $deliveryOrder->update([
                 'total_qty'     => $totalQty,
                 'total_diskon'  => $totalDiskon,
                 'grand_total'   => $grandTotal,
             ]);
+
+            // Simpan shipping
+            foreach ($shippings as $shipping) {
+                $deliveryOrder->shippings()->create([
+                    'courier_code'            => $shipping['courier_code'],
+                    'courier_name'            => $shipping['courier_name'],
+                    'courier_service_name'    => $shipping['courier_service_name'],
+                    'shipment_duration_range' => $shipping['shipment_duration_range'] ?? null,
+                    'price'                   => $shipping['price'],
+                ]);
+            }
 
             DB::commit();
             return redirect()->route('transaksi_delivery_orders.index')
@@ -207,6 +238,7 @@ class DeliveryOrdersController extends Controller
             'sales_order.customer',
             'sales_order.details.product',
             'details.product',
+            'shippings',
         ]);
 
         $deliveryDetails = $deliveryOrder->details->keyBy('product_id');
@@ -217,9 +249,9 @@ class DeliveryOrdersController extends Controller
             'customer' => $deliveryOrder->sales_order->customer,
             'salesOrderDetails' => $deliveryOrder->sales_order->details,
             'deliveryDetails' => $deliveryDetails,
+            'shippings' => $deliveryOrder->shippings,
         ]);
     }
-
 
     // Memperbarui delivery_orders
     public function update(Request $request, $id)
@@ -237,34 +269,57 @@ class DeliveryOrdersController extends Controller
             'detail.*.harga'           => 'required|numeric|min:0',
             'detail.*.diskon'          => 'required|numeric|min:0',
             'detail.*.subtotal'        => 'required|numeric|min:0',
+
+            'shippings'                => 'nullable|string', // <== validasi awal sebagai string
         ]);
 
-        $total_qty     = collect($validated['detail'])->sum('qty');
-        $total_diskon  = collect($validated['detail'])->sum('diskon');
-        $grand_total   = collect($validated['detail'])->sum('subtotal');
+        // Decode dan validasi shipping manual
+        $shippings = [];
+        if (!empty($validated['shippings'])) {
+            $shippings = json_decode($validated['shippings'], true);
+
+            if (!is_array($shippings)) {
+                return back()->withErrors(['shippings' => 'Format data shipping tidak valid.'])->withInput();
+            }
+
+            foreach ($shippings as $i => $ship) {
+                if (
+                    empty($ship['courier_code']) ||
+                    empty($ship['courier_name']) ||
+                    empty($ship['courier_service_name']) ||
+                    !isset($ship['price'])
+                ) {
+                    return back()->withErrors([
+                        'shippings' => "Data shipping baris ke-{$i} tidak lengkap."
+                    ])->withInput();
+                }
+            }
+        }
+
+        $total_qty    = collect($validated['detail'])->sum('qty');
+        $total_diskon = collect($validated['detail'])->sum('diskon');
+        $grand_total  = collect($validated['detail'])->sum('subtotal');
 
         DB::beginTransaction();
 
         try {
             $deliveryOrder = DeliveryOrder::findOrFail($id);
 
-            // Update header Delivery Order
+            // Update data header
             $deliveryOrder->update([
-                'sales_order_id'     => $validated['sales_order_id'],
-                'tanggal'            => $validated['tanggal'],
-                'origin'             => $validated['origin'],
-                'origin_name'        => $validated['origin_name'],
-                'destination'        => $validated['destination'],
-                'destination_name'   => $validated['destination_name'],
-                'total_qty'          => $total_qty,
-                'total_diskon'       => $total_diskon,
-                'grand_total'        => $grand_total,
+                'sales_order_id'   => $validated['sales_order_id'],
+                'tanggal'          => $validated['tanggal'],
+                'origin'           => $validated['origin'],
+                'origin_name'      => $validated['origin_name'],
+                'destination'      => $validated['destination'],
+                'destination_name' => $validated['destination_name'],
+                'total_qty'        => $total_qty,
+                'total_diskon'     => $total_diskon,
+                'grand_total'      => $grand_total,
             ]);
 
-            // Hapus semua detail lama
+            // Hapus dan simpan ulang detail produk
             $deliveryOrder->details()->delete();
-
-            // Simpan detail baru
             foreach ($validated['detail'] as $item) {
                 $deliveryOrder->details()->create([
                     'product_id' => $item['product_id'],
@@ -275,10 +330,20 @@ class DeliveryOrdersController extends Controller
                 ]);
             }
 
-            DB::commit();
+            // Hapus ongkir lama dan simpan baru
+            $deliveryOrder->shippings()->delete();
+            foreach ($shippings as $ship) {
+                $deliveryOrder->shippings()->create([
+                    'courier_code'            => $ship['courier_code'],
+                    'courier_name'            => $ship['courier_name'],
+                    'courier_service_name'    => $ship['courier_service_name'],
+                    'shipment_duration_range' => $ship['shipment_duration_range'] ?? null,
+                    'price'                   => $ship['price'],
+                ]);
+            }
 
-            return redirect()
-                ->route('transaksi_delivery_orders.index')
+            DB::commit();
+            return redirect()->route('transaksi_delivery_orders.index')
                 ->with('success', 'Delivery Order berhasil diperbarui.');
         } catch (\Throwable $th) {
             DB::rollBack();

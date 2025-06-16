@@ -1,29 +1,18 @@
 {
-  "_fancybox-l0sNRNKZ.js": {
-    "file": "assets/fancybox-l0sNRNKZ.js",
-    "name": "fancybox"
-  },
   "_format-B7a5NblC.js": {
     "file": "assets/format-B7a5NblC.js",
     "name": "format"
   },
-  "_pdf-CWRAb0pv.js": {
-    "file": "assets/pdf-CWRAb0pv.js",
-    "name": "pdf",
-    "imports": [
-      "_vendor-Bt-ajNKG.js"
-    ]
-  },
-  "_vendor-Bt-ajNKG.js": {
-    "file": "assets/vendor-Bt-ajNKG.js",
+  "_vendor-DcHDpzIg.js": {
+    "file": "assets/vendor-DcHDpzIg.js",
     "name": "vendor"
   },
   "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff": {
-    "file": "assets/bootstrap-icons-BOrJxbIo.woff",
+    "file": "assets/bootstrap-icons-BeopsB42.woff",
     "src": "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff"
   },
   "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff2": {
-    "file": "assets/bootstrap-icons-BtvjY1KL.woff2",
+    "file": "assets/bootstrap-icons-mSm7cUeB.woff2",
     "src": "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff2"
   },
   "public/images/bg-themes/body-background.webp": {
@@ -31,7 +20,7 @@
     "src": "public/images/bg-themes/body-background.webp"
   },
   "resources/css/app.css": {
-    "file": "assets/app-C9Si0fN-.css",
+    "file": "assets/app-BdxFp74M.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -41,7 +30,7 @@
     "isEntry": true
   },
   "resources/css/dashboard.css": {
-    "file": "assets/dashboard-Fxm2P7mN.css",
+    "file": "assets/dashboard-BIB8r9yF.css",
     "src": "resources/css/dashboard.css",
     "isEntry": true
   },
@@ -52,12 +41,12 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-7D0asImK.js",
+    "file": "assets/app-BdpEYyzv.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor-Bt-ajNKG.js"
+      "_vendor-DcHDpzIg.js"
     ]
   },
   "resources/js/auth.js": {
@@ -67,13 +56,12 @@
     "isEntry": true
   },
   "resources/js/dashboard.js": {
-    "file": "assets/dashboard-Db6gMYeU.js",
+    "file": "assets/dashboard-CEVLY6rC.js",
     "name": "dashboard",
     "src": "resources/js/dashboard.js",
     "isEntry": true,
     "imports": [
-      "_pdf-CWRAb0pv.js",
-      "_vendor-Bt-ajNKG.js"
+      "_vendor-DcHDpzIg.js"
     ],
     "dynamicImports": [
       "resources/js/pages/dashboard.js",
@@ -162,15 +150,14 @@
     ]
   },
   "resources/js/pages/transaksi/sales_orders.js": {
-    "file": "assets/sales_orders-BPZmdLCC.js",
+    "file": "assets/sales_orders-mVwsvB6m.js",
     "name": "sales_orders",
     "src": "resources/js/pages/transaksi/sales_orders.js",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/dashboard.js",
       "_format-B7a5NblC.js",
-      "_pdf-CWRAb0pv.js",
-      "_vendor-Bt-ajNKG.js"
+      "_vendor-DcHDpzIg.js"
     ]
   }
 }

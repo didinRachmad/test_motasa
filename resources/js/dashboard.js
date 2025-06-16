@@ -14,9 +14,9 @@ import AutoNumeric from "autonumeric";
 import "./main";
 
 // PDF & Excel support untuk Buttons
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
-import JSZip from "jszip";
+// import pdfMake from "pdfmake/build/pdfmake";
+// import pdfFonts from "pdfmake/build/vfs_fonts";
+// import JSZip from "jszip";
 import {
     showAlert,
     showConfirmDialog,
@@ -29,9 +29,9 @@ import {
 select2(); // init Select2 (jQuery-based)
 Pace.start(); // init loading bar
 
-pdfMake.vfs = pdfFonts.vfs;
-window.JSZip = JSZip;
-window.pdfMake = pdfMake;
+// pdfMake.vfs = pdfFonts.vfs;
+// window.JSZip = JSZip;
+// window.pdfMake = pdfMake;
 
 window.showAlert = showAlert;
 window.showConfirmDialog = showConfirmDialog;

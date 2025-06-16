@@ -15,6 +15,7 @@ class RouteApprovalSeeder extends Seeder
     public function run(): void
     {
         // Ambil role yang dibutuhkan
+        $superAdmin = Role::where('name', 'super_admin')->first();
         $adminDepo = Role::where('name', 'Admin Depo')->first();
         $spvDepo   = Role::where('name', 'SPV Depo')->first();
 
@@ -40,6 +41,26 @@ class RouteApprovalSeeder extends Seeder
             DB::table('approval_routes')->insertOrIgnore([
                 'module'            => $module,
                 'role_id'           => $spvDepo->id,
+                'sequence'          => 2,
+                'assigned_user_id'  => null,
+                'created_at'        => now(),
+                'updated_at'        => now(),
+            ]);
+
+            // Sequence 1 – Super Admin
+            DB::table('approval_routes')->insertOrIgnore([
+                'module'            => $module,
+                'role_id'           => $superAdmin->id,
+                'sequence'          => 1,
+                'assigned_user_id'  => null, // default kosong
+                'created_at'        => now(),
+                'updated_at'        => now(),
+            ]);
+
+            // Sequence 2 – Super Admin
+            DB::table('approval_routes')->insertOrIgnore([
+                'module'            => $module,
+                'role_id'           => $superAdmin->id,
                 'sequence'          => 2,
                 'assigned_user_id'  => null,
                 'created_at'        => now(),

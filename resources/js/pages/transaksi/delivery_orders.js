@@ -277,6 +277,17 @@ class DeliveryOrdersPage {
         this.setupSoSelect();
         this.setupAreaSelect();
         this.btnCekOngkir.addEventListener("click", () => this.checkOngkir());
+
+        const shippingEl = document.getElementById("shipping-init-data");
+        if (shippingEl) {
+            try {
+                const pricing = JSON.parse(shippingEl.dataset.shippings);
+                this.renderOngkirTable(pricing);
+                this.saveOngkirDataToForm(pricing);
+            } catch (e) {
+                console.error("Gagal memuat data ongkir dari server", e);
+            }
+        }
     }
 
     setupSoSelect() {
@@ -488,6 +499,7 @@ class DeliveryOrdersPage {
     async checkOngkir() {
         const origin = this.areaSelectEls.filter("#origin").val();
         const destination = this.areaSelectEls.filter("#destination").val();
+
         const items = [...document.querySelectorAll(".product-row")]
             .map((r) => ({
                 name: r.dataset.nama,
@@ -516,6 +528,7 @@ class DeliveryOrdersPage {
             <span class="ms-2">Loading ongkir…</span>
         </div>`
         );
+
         try {
             const res = await fetch(this.cekOngkirUrl, {
                 method: "POST",
@@ -535,11 +548,14 @@ class DeliveryOrdersPage {
             }).then((r) => r.json());
 
             if (!res.success || !res.pricing) throw new Error();
+
             this.renderOngkirTable(res.pricing);
+            this.saveOngkirDataToForm(res.pricing); // <== Simpan ke hidden input
         } catch {
             $("#harga_ongkir_list").html(
                 `<div class="text-danger">Gagal mengambil ongkir.</div>`
             );
+            this.saveOngkirDataToForm([]); // <== Kosongkan jika gagal
         }
     }
 
@@ -550,20 +566,36 @@ class DeliveryOrdersPage {
       <tr>
         <td>${s.courier_name}</td>
         <td>${s.courier_service_name}</td>
-        <td>${s.shipment_duration_range} hari</td>
+        <td>${s.shipment_duration_range ?? "-"} hari</td>
         <td>${formatRupiah(s.price)}</td>
-      </tr>
-    `
+      </tr>`
             )
             .join("");
 
         $("#harga_ongkir_list").html(`
       <div class="table-responsive mt-2">
         <table class="table table-sm table-bordered">
-          <thead class="table-light text-center"><tr><th>Kurir</th><th>Layanan</th><th>Estimasi</th><th>Harga</th></tr></thead>
+          <thead class="table-light text-center">
+            <tr><th>Kurir</th><th>Layanan</th><th>Estimasi</th><th>Harga</th></tr>
+          </thead>
           <tbody>${rows}</tbody>
         </table>
       </div>`);
+    }
+
+    saveOngkirDataToForm(pricing = []) {
+        const parsedData = pricing.map((p) => ({
+            courier_code: p.courier_code,
+            courier_name: p.courier_name,
+            courier_service_name: p.courier_service_name,
+            shipment_duration_range: p.shipment_duration_range,
+            price: p.price,
+        }));
+
+        const input = document.querySelector("#shippings-data");
+        if (input) {
+            input.value = JSON.stringify(parsedData);
+        }
     }
 }
 

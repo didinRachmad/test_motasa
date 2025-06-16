@@ -21,7 +21,7 @@
 
                         <table id="datatables" data-url="{{ route('approval_routes.data') }}"
                             class="table table-sm align-middle table-striped table-bordered">
-                            <thead class="table-light">
+                            <thead class="bg-gd">
                                 <tr>
                                     <th>No</th>
                                     <th>Module</th>
