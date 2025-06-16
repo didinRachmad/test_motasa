@@ -173,10 +173,10 @@ class DeliveryOrdersController extends Controller
                 'no_do'              => $no_do,
                 'tanggal'            => $validated['tanggal'],
                 'sales_order_id'     => $validated['sales_order_id'],
-                'origin'             => $validated['origin'],
-                'origin_name'        => $validated['origin_name'],
-                'destination'        => $validated['destination'],
-                'destination_name'   => $validated['destination_name'],
+                'origin'             => $validated['origin'] ?? "",
+                'origin_name'        => $validated['origin_name'] ?? "",
+                'destination'        => $validated['destination'] ?? "",
+                'destination_name'   => $validated['destination_name'] ?? "",
             ]);
 
             foreach ($validated['detail'] as $index => $detail) {
