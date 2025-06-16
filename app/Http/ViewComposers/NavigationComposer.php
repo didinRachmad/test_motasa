@@ -70,7 +70,7 @@ class NavigationComposer
 
         // Ambil semua menu dengan parent_id yang sesuai, dalam urutan array
         $items = $menus->filter(function ($menu) use ($parentId) {
-            return $menu->parent_id === $parentId;
+            return $menu->parent_id == $parentId;
         });
 
         // Urutkan berdasarkan order dan reset keys
