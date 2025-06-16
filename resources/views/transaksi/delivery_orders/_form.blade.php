@@ -136,6 +136,7 @@
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
+
         <div class="row gy-1 mt-2 justify-content-center">
             <div class="col-md-3">
                 <button type="button" id="btnCekOngkir" class="btn btn-sm rounded-4 btn-primary w-100">
@@ -148,19 +149,20 @@
 
             <div id="harga_ongkir_list" class="mt-3"></div>
 
-            @php
-                $shippingArray = $shippings->map(function ($item) {
-                    return [
-                        'courier_code' => $item->courier_code,
-                        'courier_name' => $item->courier_name,
-                        'courier_service_name' => $item->courier_service_name,
-                        'shipment_duration_range' => $item->shipment_duration_range,
-                        'price' => $item->price,
-                    ];
-                });
-            @endphp
-
-            <div id="shipping-init-data" data-shippings='@json($shippingArray)'></div>
+            @if (isset($shippings))
+                @php
+                    $shippingArray = $shippings->map(function ($item) {
+                        return [
+                            'courier_code' => $item->courier_code,
+                            'courier_name' => $item->courier_name,
+                            'courier_service_name' => $item->courier_service_name,
+                            'shipment_duration_range' => $item->shipment_duration_range,
+                            'price' => $item->price,
+                        ];
+                    });
+                @endphp
+                <div id="shipping-init-data" data-shippings='@json($shippingArray)'></div>
+            @endif
         </div>
     </div>
 </div>
