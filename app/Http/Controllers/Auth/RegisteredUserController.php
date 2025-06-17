@@ -20,7 +20,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        if (!auth()->check() || Auth::user()->role !== 'super_admin') {
+        if (!auth()->check() || Auth::user()->role != 'super_admin') {
             abort(403, 'Unauthorized access.');
         }
 

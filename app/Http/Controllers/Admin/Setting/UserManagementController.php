@@ -146,7 +146,7 @@ class UserManagementController extends Controller
     public function destroy(User $user)
     {
         // Cegah super_admin menghapus dirinya sendiri
-        if (auth()->id() === $user->id) {
+        if (auth()->id() == $user->id) {
             return redirect()->route('users.index')->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 

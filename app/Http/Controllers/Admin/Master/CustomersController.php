@@ -97,7 +97,7 @@ class CustomersController extends Controller
         ]);
 
         if (
-            $request->only(['kode_customer', 'nama_toko', 'alamat', 'pemilik', 'id_pasar', 'nama_pasar', 'tipe_outlet']) ===
+            $request->only(['kode_customer', 'nama_toko', 'alamat', 'pemilik', 'id_pasar', 'nama_pasar', 'tipe_outlet']) ==
             $customer->only(['kode_customer', 'nama_toko', 'alamat', 'pemilik', 'id_pasar', 'nama_pasar', 'tipe_outlet'])
         ) {
             return redirect()->route('master_customers.index')->with('info', 'Tidak ada perubahan data.');

@@ -83,8 +83,8 @@ class DeliveryOrdersController extends Controller
             ->addColumn('can_approve', function ($row) use ($approvalRoute) {
                 // Cek apakah user bukan creator dan dalam route approval yang tepat
                 return $approvalRoute
-                    && $row->approval_level === $approvalRoute->sequence - 1
-                    && $row->status !== 'Rejected';
+                    && $row->approval_level == $approvalRoute->sequence - 1
+                    && $row->status != 'Rejected';
             })
             ->addColumn('status', fn($row) => $row->status)
 
@@ -373,7 +373,7 @@ class DeliveryOrdersController extends Controller
         }
 
         // Pastikan user hanya bisa approve jika level approval-nya sesuai
-        if ($deliveryOrder->approval_level !== $approvalRoute->sequence - 1) {
+        if ($deliveryOrder->approval_level != $approvalRoute->sequence - 1) {
             abort(403, 'Delivery Order belum berada di tahap approval Anda.');
         }
 

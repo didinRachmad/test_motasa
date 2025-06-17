@@ -79,8 +79,8 @@ class SalesOrdersController extends Controller
             ->addColumn('can_approve', function ($row) use ($approvalRoute) {
                 // Cek apakah user bukan creator dan dalam route approval yang tepat
                 return $approvalRoute
-                    && $row->approval_level === $approvalRoute->sequence - 1
-                    && $row->status !== 'Rejected';
+                    && $row->approval_level == $approvalRoute->sequence - 1
+                    && $row->status != 'Rejected';
             })
             ->addColumn('status', fn($row) => $row->status)
 
@@ -297,7 +297,7 @@ class SalesOrdersController extends Controller
         }
 
         // Pastikan user hanya bisa approve jika level approval-nya sesuai
-        if ($salesOrder->approval_level !== $approvalRoute->sequence - 1) {
+        if ($salesOrder->approval_level != $approvalRoute->sequence - 1) {
             abort(403, 'Sales Order belum berada di tahap approval Anda.');
         }
 
