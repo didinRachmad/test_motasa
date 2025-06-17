@@ -93,7 +93,7 @@ class SalesOrdersPage {
                         // Tombol Approve / Action
                         const canApprove =
                             row.approval_level == row.approval_sequence - 1 &&
-                            row.status !== "Rejected";
+                            row.status != "Rejected";
 
                         if (canApprove) {
                             if (row.approval_level == 0) {
