@@ -36,56 +36,44 @@ class DeliveryOrdersController extends Controller
         }
 
         // Ambil route approval berdasarkan modul dan role user
-        $approvalRoute = ApprovalRoute::where('module', $module)
-            ->where('role_id', $role->id)
-            ->first();
+        $approvalRoutes = ApprovalRoute::where('module', $module)->get();
+        $currentApprovalRoute = $approvalRoutes->where('role_id', $role->id)->first();
 
         // Query dasar untuk join customer dan delivery_orders
-        $query = DeliveryOrder::query()
-            ->select([
-                'delivery_orders.id',
-                'delivery_orders.no_do',
-                'delivery_orders.tanggal',
-                'delivery_orders.sales_order_id',
-                'customers.kode_customer',
-                'customers.nama_toko',
-                'sales_orders.metode_pembayaran as metode_pembayaran',
-                'delivery_orders.total_qty',
-                'delivery_orders.total_diskon',
-                'delivery_orders.grand_total',
-                'delivery_orders.approval_level',
-                'delivery_orders.status',
-                'delivery_orders.keterangan',
-                'sales_orders.no_so',
-            ])
+        $query = DeliveryOrder::select([
+            'delivery_orders.id as id',
+            'delivery_orders.no_do as no_do',
+            'delivery_orders.tanggal as tanggal',
+            'delivery_orders.sales_order_id as sales_order_id',
+            'sales_orders.no_so as no_so',
+            'customers.kode_customer as kode_customer',
+            'customers.nama_toko as nama_toko',
+            DB::raw("CONCAT(customers.kode_customer, ' - ', customers.nama_toko) as customer"),
+            'sales_orders.metode_pembayaran as metode_pembayaran',
+            'delivery_orders.total_qty as total_qty',
+            'delivery_orders.total_diskon as total_diskon',
+            'delivery_orders.grand_total as grand_total',
+            'delivery_orders.approval_level as approval_level',
+            'delivery_orders.status as status',
+            'delivery_orders.keterangan as keterangan',
+        ])
             ->join('sales_orders', 'delivery_orders.sales_order_id', '=', 'sales_orders.id')
-            ->join('customers', 'sales_orders.customer_id', '=', 'customers.id')->orderBy('delivery_orders.id', 'desc');
+            ->join('customers',   'sales_orders.customer_id',     '=', 'customers.id');
 
-        // filter approval jika perlu
-        if ($approvalRoute && $approvalRoute->sequence != 1) {
-            $query->where('delivery_orders.approval_level', $approvalRoute->sequence - 1)
+        // Filter approval khusus jika bukan sequence pertama
+        if ($currentApprovalRoute && $currentApprovalRoute->sequence != 1) {
+            $query = $query->where('delivery_orders.approval_level', $currentApprovalRoute->sequence - 1)
                 ->where('delivery_orders.status', '!=', 'Rejected');
         }
 
         return DataTables::of($query)
             ->addIndexColumn()
-            ->addColumn('so', fn($row) => $row->no_so ?? '-')
-            ->addColumn('customer', fn($row) => $row->kode_customer . ' - ' . $row->nama_toko)
-            ->editColumn('tanggal', fn($row) => Carbon::parse($row->tanggal)->format('d/m/Y'))
-            ->editColumn('total_diskon', fn($row) => (float) $row->total_diskon)
-            ->editColumn('grand_total', fn($row) => (float) $row->grand_total)
 
-            ->addColumn('can_show', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'show'))
-            ->addColumn('can_print', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'print'))
+            ->editColumn('tanggal', fn($row) => Carbon::parse($row->tanggal)->format('d/m/Y'))
+            ->orderColumn('tanggal', 'tanggal $1')
 
             ->addColumn('approval_level', fn($row) => $row->approval_level)
             ->addColumn('approval_sequence', fn($row) => $approvalRoute->sequence ?? 0)
-            ->addColumn('can_approve', function ($row) use ($approvalRoute) {
-                // Cek apakah user bukan creator dan dalam route approval yang tepat
-                return $approvalRoute
-                    && $row->approval_level == $approvalRoute->sequence - 1
-                    && $row->status != 'Rejected';
-            })
             ->addColumn('status', fn($row) => $row->status)
 
             ->addColumn('show_url', fn($row) => route('transaksi_delivery_orders.show', $row->id))
@@ -93,6 +81,16 @@ class DeliveryOrdersController extends Controller
             ->addColumn('approve_url', fn($row) => route('transaksi_delivery_orders.approve', $row->id))
             ->addColumn('reject_url', fn($row) => route('transaksi_delivery_orders.reject', $row->id))
 
+            ->addColumn('can_show', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'show'))
+            ->addColumn('can_print', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'print'))
+            ->addColumn('can_approve', function ($row) use ($approvalRoutes) {
+                return $approvalRoutes->contains(function ($route) use ($row) {
+                    return $row->approval_level == $route->sequence - 1
+                        && $route->role_id == Auth::user()->roles->first()->id
+                        && $row->status != 'Rejected';
+                });
+            })
+            ->addColumn('can_modify', fn($row) => $row->approval_level == 0)
             ->addColumn('can_edit', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'edit'))
             ->addColumn('can_delete', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'destroy'))
             ->addColumn('edit_url', fn($row) => route('transaksi_delivery_orders.edit', $row->id))

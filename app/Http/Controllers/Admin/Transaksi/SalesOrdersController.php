@@ -36,52 +36,42 @@ class SalesOrdersController extends Controller
         }
 
         // Ambil route approval berdasarkan modul dan role user
-        $approvalRoute = ApprovalRoute::where('module', $module)
-            ->where('role_id', $role->id)
-            ->first();
+        $approvalRoutes = ApprovalRoute::where('module', $module)->get();
+        $currentApprovalRoute = $approvalRoutes->where('role_id', $role->id)->first();
 
         // Query dasar untuk join customer dan sales_orders
         $query = SalesOrder::select([
-            'sales_orders.id',
-            'sales_orders.no_so',
-            'sales_orders.tanggal',
-            'sales_orders.customer_id',
-            'customers.kode_customer',
-            'customers.nama_toko',
-            'sales_orders.metode_pembayaran',
-            'sales_orders.total_qty',
-            'sales_orders.total_diskon',
-            'sales_orders.grand_total',
-            'sales_orders.approval_level',
-            'sales_orders.status',
-            'sales_orders.keterangan',
-        ])
-            ->join('customers', 'sales_orders.customer_id', '=', 'customers.id')->orderBy('sales_orders.id', 'desc');
+            'sales_orders.id as id',
+            'sales_orders.no_so as no_so',
+            'sales_orders.tanggal as tanggal',
+            'sales_orders.customer_id as customer_id',
+            'sales_orders.metode_pembayaran as metode_pembayaran',
+            'sales_orders.total_qty as total_qty',
+            'sales_orders.total_diskon as total_diskon',
+            'sales_orders.grand_total as grand_total',
+            'sales_orders.approval_level as approval_level',
+            'sales_orders.status as status',
+            'sales_orders.keterangan as keterangan',
 
-        // 🔒 Filter approval khusus jika bukan sequence pertama
-        if ($approvalRoute && $approvalRoute->sequence != 1) {
-            $query = $query->where('sales_orders.approval_level', $approvalRoute->sequence - 1)
+            'customers.kode_customer as kode_customer',
+            'customers.nama_toko as nama_toko',
+            DB::raw("CONCAT(customers.kode_customer, ' - ', customers.nama_toko) as customer"),
+        ])
+            ->join('customers', 'sales_orders.customer_id', '=', 'customers.id');
+
+        // Filter approval khusus jika bukan sequence pertama
+        if ($currentApprovalRoute && $currentApprovalRoute->sequence != 1) {
+            $query = $query->where('sales_orders.approval_level', $currentApprovalRoute->sequence - 1)
                 ->where('sales_orders.status', '!=', 'Rejected');
         }
 
         return DataTables::of($query)
             ->addIndexColumn()
-            ->addColumn('customer', fn($row) => $row->kode_customer . ' - ' . $row->nama_toko)
             ->editColumn('tanggal', fn($row) => Carbon::parse($row->tanggal)->format('d/m/Y'))
-            ->addColumn('total_diskon', fn($row) => (float) $row->total_diskon)
-            ->addColumn('grand_total', fn($row) => (float) $row->grand_total)
-
-            ->addColumn('can_show', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'show'))
-            ->addColumn('can_print', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'print'))
+            ->orderColumn('tanggal', 'tanggal $1')
 
             ->addColumn('approval_level', fn($row) => $row->approval_level)
             ->addColumn('approval_sequence', fn($row) => $approvalRoute->sequence ?? 0)
-            ->addColumn('can_approve', function ($row) use ($approvalRoute) {
-                // Cek apakah user bukan creator dan dalam route approval yang tepat
-                return $approvalRoute
-                    && $row->approval_level == $approvalRoute->sequence - 1
-                    && $row->status != 'Rejected';
-            })
             ->addColumn('status', fn($row) => $row->status)
 
             ->addColumn('show_url', fn($row) => route('transaksi_sales_orders.show', $row->id))
@@ -89,6 +79,16 @@ class SalesOrdersController extends Controller
             ->addColumn('approve_url', fn($row) => route('transaksi_sales_orders.approve', $row->id))
             ->addColumn('reject_url', fn($row) => route('transaksi_sales_orders.reject', $row->id))
 
+            ->addColumn('can_show', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'show'))
+            ->addColumn('can_print', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'print'))
+            ->addColumn('can_approve', function ($row) use ($approvalRoutes) {
+                return $approvalRoutes->contains(function ($route) use ($row) {
+                    return $row->approval_level == $route->sequence - 1
+                        && $route->role_id == Auth::user()->roles->first()->id
+                        && $row->status != 'Rejected';
+                });
+            })
+            ->addColumn('can_modify', fn($row) => $row->approval_level == 0)
             ->addColumn('can_edit', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'edit'))
             ->addColumn('can_delete', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'destroy'))
             ->addColumn('edit_url', fn($row) => route('transaksi_sales_orders.edit', $row->id))

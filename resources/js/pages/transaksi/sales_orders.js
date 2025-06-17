@@ -91,11 +91,7 @@ class SalesOrdersPage {
                         }
 
                         // Tombol Approve / Action
-                        const canApprove =
-                            row.approval_level == row.approval_sequence - 1 &&
-                            row.status != "Rejected";
-
-                        if (canApprove) {
+                        if (row.can_approve) {
                             if (row.approval_level == 0) {
                                 buttons += `
                                     <form action="${
@@ -158,9 +154,7 @@ class SalesOrdersPage {
                             }
                         }
 
-                        const canModify = row.approval_level == 0;
-
-                        if (canModify) {
+                        if (row.can_modify) {
                             if (row.can_edit) {
                                 buttons += `
                                     <a href="${row.edit_url}" class="btn btn-sm rounded-4 btn-warning" data-bs-toggle="tooltip" title="Edit">

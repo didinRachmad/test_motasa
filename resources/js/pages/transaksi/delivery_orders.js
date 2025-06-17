@@ -119,106 +119,98 @@ class DeliveryOrdersPage {
                         // Tombol Detail
                         if (row.can_show) {
                             buttons += `
-                <a href="${row.show_url}" class="btn btn-sm rounded-4 btn-info" data-bs-toggle="tooltip" title="Detail">
-                    <i class="bi bi-eye-fill"></i>
-                </a>
-            `;
+                            <a href="${row.show_url}" class="btn btn-sm rounded-4 btn-info" data-bs-toggle="tooltip" title="Detail">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+                        `;
                         }
 
-                        // Tombol Approve / Action
-                        const canApprove =
-                            row.approval_level == row.approval_sequence - 1 &&
-                            row.status != "Rejected";
-
-                        if (canApprove) {
+                        if (row.can_approve) {
                             if (row.approval_level == 0) {
                                 buttons += `
-                    <form action="${
-                        row.approve_url
-                    }" method="POST" class="d-inline form-approval">
-                        <input type="hidden" name="_token" value="${$(
-                            'meta[name="csrf-token"]'
-                        ).attr("content")}">
-                        <button type="submit" class="btn btn-sm rounded-4 btn-success btn-approve" data-bs-toggle="tooltip" title="Ajukan">
-                            <i class="bi bi-check2-square"></i>
-                        </button>
-                    </form>
-                `;
+                                    <form action="${
+                                        row.approve_url
+                                    }" method="POST" class="d-inline form-approval">
+                                        <input type="hidden" name="_token" value="${$(
+                                            'meta[name="csrf-token"]'
+                                        ).attr("content")}">
+                                        <button type="submit" class="btn btn-sm rounded-4 btn-success btn-approve" data-bs-toggle="tooltip" title="Ajukan">
+                                            <i class="bi bi-check2-square"></i>
+                                        </button>
+                                    </form>
+                                `;
                             } else {
                                 buttons += `
-                    <div class="dropdown dropstart d-inline">
-                        <button class="btn btn-sm rounded-4 btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Action">
-                            <i class="bi bi-gear-fill"></i>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <form action="${
-                                    row.revisi_url
-                                }" method="POST" class="form-revisi">
-                                    <input type="hidden" name="_token" value="${$(
-                                        'meta[name="csrf-token"]'
-                                    ).attr("content")}">
-                                    <button type="submit" class="dropdown-item text-warning btn-revisi">
-                                        <i class="bi bi-arrow-clockwise"></i> Revisi
-                                    </button>
-                                </form>
-                            </li>
-                            <li>
-                                <form action="${
-                                    row.approve_url
-                                }" method="POST" class="form-approval">
-                                    <input type="hidden" name="_token" value="${$(
-                                        'meta[name="csrf-token"]'
-                                    ).attr("content")}">
-                                    <button type="submit" class="dropdown-item text-success btn-approve">
-                                        <i class="bi bi-check2-square"></i> Approve
-                                    </button>
-                                </form>
-                            </li>
-                            <li>
-                                <form action="${
-                                    row.reject_url
-                                }" method="POST" class="form-reject">
-                                    <input type="hidden" name="_token" value="${$(
-                                        'meta[name="csrf-token"]'
-                                    ).attr("content")}">
-                                    <button type="button" class="dropdown-item text-danger btn-reject">
-                                        <i class="bi bi-x-square-fill"></i> Reject
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                `;
+                                    <div class="dropdown dropstart d-inline">
+                                        <button class="btn btn-sm rounded-4 btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Action">
+                                            <i class="bi bi-gear-fill"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <form action="${
+                                                    row.revisi_url
+                                                }" method="POST" class="form-revisi">
+                                                    <input type="hidden" name="_token" value="${$(
+                                                        'meta[name="csrf-token"]'
+                                                    ).attr("content")}">
+                                                    <button type="submit" class="dropdown-item text-warning btn-revisi">
+                                                        <i class="bi bi-arrow-clockwise"></i> Revisi
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form action="${
+                                                    row.approve_url
+                                                }" method="POST" class="form-approval">
+                                                    <input type="hidden" name="_token" value="${$(
+                                                        'meta[name="csrf-token"]'
+                                                    ).attr("content")}">
+                                                    <button type="submit" class="dropdown-item text-success btn-approve">
+                                                        <i class="bi bi-check2-square"></i> Approve
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form action="${
+                                                    row.reject_url
+                                                }" method="POST" class="form-reject">
+                                                    <input type="hidden" name="_token" value="${$(
+                                                        'meta[name="csrf-token"]'
+                                                    ).attr("content")}">
+                                                    <button type="button" class="dropdown-item text-danger btn-reject">
+                                                        <i class="bi bi-x-square-fill"></i> Reject
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                `;
                             }
                         }
 
-                        // Tombol Edit dan Hapus hanya jika belum pernah approval
-                        const canModify = row.approval_level == 0;
-
-                        if (canModify) {
+                        if (row.can_modify) {
                             if (row.can_edit) {
                                 buttons += `
-                    <a href="${row.edit_url}" class="btn btn-sm rounded-4 btn-warning" data-bs-toggle="tooltip" title="Edit">
-                        <i class="bi bi-pencil-square"></i>
-                    </a>
-                `;
+                                    <a href="${row.edit_url}" class="btn btn-sm rounded-4 btn-warning" data-bs-toggle="tooltip" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                `;
                             }
 
                             if (row.can_delete) {
                                 buttons += `
-                    <form action="${
-                        row.delete_url
-                    }" method="POST" class="d-inline form-delete">
-                        <input type="hidden" name="_token" value="${$(
-                            'meta[name="csrf-token"]'
-                        ).attr("content")}">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <button type="button" class="btn btn-sm rounded-4 btn-danger btn-delete" data-bs-toggle="tooltip" title="Hapus">
-                            <i class="bi bi-trash-fill"></i>
-                        </button>
-                    </form>
-                `;
+                                    <form action="${
+                                        row.delete_url
+                                    }" method="POST" class="d-inline form-delete">
+                                        <input type="hidden" name="_token" value="${$(
+                                            'meta[name="csrf-token"]'
+                                        ).attr("content")}">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="button" class="btn btn-sm rounded-4 btn-danger btn-delete" data-bs-toggle="tooltip" title="Hapus">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </form>
+                                `;
                             }
                         }
 

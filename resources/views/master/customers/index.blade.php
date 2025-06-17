@@ -19,7 +19,7 @@
                 <div class="card-body">
                     <table id="datatables" data-url="{{ route('master_customers.data') }}"
                         class="table table-sm align-middle table-striped table-bordered">
-                        <thead class="table-light">
+                        <thead class="bg-gd">
                             <tr>
                                 <th>No</th>
                                 <th>Kode Customer</th>
