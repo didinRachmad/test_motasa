@@ -21,14 +21,14 @@ class CustomersController extends Controller
 
     public function data()
     {
-        $menu = currentMenu(); // helper dari AppServiceProvider
+        $activeMenu = currentMenu(); // helper dari AppServiceProvider
         $query = Customer::select('id', 'kode_customer', 'nama_toko', 'pemilik', 'alamat', 'id_pasar', 'nama_pasar', 'tipe_outlet');
 
         return DataTables::of($query)
             ->addIndexColumn()
             // ->addColumn('nama', fn ($row) => $row->nama)
-            ->addColumn('can_edit', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'edit'))
-            ->addColumn('can_delete', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'destroy'))
+            ->addColumn('can_edit', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'edit'))
+            ->addColumn('can_delete', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'destroy'))
             ->addColumn('edit_url', fn($row) => route('master_customers.edit', $row->id))
             ->addColumn('delete_url', fn($row) => route('master_customers.destroy', $row->id))
             ->make(true);

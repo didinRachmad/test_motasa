@@ -7,11 +7,11 @@
 {{-- Header --}}
 <div class="row gy-2">
     <div class="col-md-4">
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="tanggal">Tanggal</label>
             <input type="date" id="tanggal" name="tanggal"
                 class="form-control form-control-sm @error('tanggal') is-invalid @enderror"
-                value="{{ old('tanggal', $tanggal) }}" required>
+                value="{{ old('tanggal', $tanggal) }}" >
             @error('tanggal')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -20,10 +20,10 @@
 
     <div class="col-md-4" id="customer-select-wrapper"
         data-get-customers-url="{{ route('master_customers.getCustomers') }}">
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="selectCustomer">Customer</label>
             <select id="selectCustomer" name="customer_id"
-                class="form-select form-select-sm @error('customer_id') is-invalid @enderror" required>
+                class="form-select form-select-sm @error('customer_id') is-invalid @enderror" >
                 @if ($selectedCustomer)
                     <option value="{{ $selectedCustomer->id }}" selected>
                         {{ $selectedCustomer->kode_customer }} – {{ $selectedCustomer->nama_toko }}
@@ -37,10 +37,10 @@
     </div>
 
     <div class="col-md-4">
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="metode_pembayaran">Metode Pembayaran</label>
             <select id="metode_pembayaran" name="metode_pembayaran"
-                class="form-select form-select-sm @error('metode_pembayaran') is-invalid @enderror" required>
+                class="form-select form-select-sm @error('metode_pembayaran') is-invalid @enderror" >
                 @php
                     $old = old('metode_pembayaran', $salesOrder->metode_pembayaran ?? '');
                 @endphp
@@ -79,8 +79,8 @@
 
                     $qty = old("detail.$productId.qty", $detail->qty ?? 0);
                     $harga = $detail->harga ?? $product->harga;
-                    $diskon = old("detail.$productId.diskon", $detail->diskon ?? 0);
-                    $subtotal = old("detail.$productId.subtotal", $detail->subtotal ?? 0);
+                    $diskon = $detail->diskon ?? 0;
+                    $subtotal = $detail->subtotal ?? 0;
                 @endphp
                 <tr class="product-row" data-harga="{{ $harga }}">
                     <td>

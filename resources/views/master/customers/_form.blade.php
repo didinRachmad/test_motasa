@@ -1,8 +1,8 @@
 <div class="row">
     <div class="col-md-4 mb-2">
-        <label for="kode_customer">Kode Customer</label>
+        <label for="kode_customer">Kode Customer <span class="text-danger">*</span></label>
         <input type="text" name="kode_customer"
-            class="form-control form-control-sm @error('kode_customer') is-invalid @enderror" required
+            class="form-control form-control-sm @error('kode_customer') is-invalid @enderror" 
             value="{{ old('kode_customer', $customer->kode_customer ?? '') }}">
         @error('kode_customer')
             <div class="invalid-feedback">{{ $message }}</div>
@@ -10,9 +10,9 @@
     </div>
 
     <div class="col-md-4 mb-2">
-        <label for="nama_toko">Nama Toko</label>
+        <label for="nama_toko">Nama Toko <span class="text-danger">*</span></label>
         <input type="text" name="nama_toko"
-            class="form-control form-control-sm @error('nama_toko') is-invalid @enderror" required
+            class="form-control form-control-sm @error('nama_toko') is-invalid @enderror" 
             value="{{ old('nama_toko', $customer->nama_toko ?? '') }}">
         @error('nama_toko')
             <div class="invalid-feedback">{{ $message }}</div>
@@ -29,37 +29,37 @@
     </div>
 
     <div class="col-md-12 mb-2">
-        <label for="alamat">Alamat</label>
-        <textarea name="alamat" class="form-control form-control-sm @error('alamat') is-invalid @enderror" required>{{ old('alamat', $customer->alamat ?? '') }}</textarea>
+        <label for="alamat">Alamat <span class="text-danger">*</span></label>
+        <textarea name="alamat" class="form-control form-control-sm @error('alamat') is-invalid @enderror" >{{ old('alamat', $customer->alamat ?? '') }}</textarea>
         @error('alamat')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
 
     <div class="col-md-3 mb-2">
-        <label for="id_pasar">ID Pasar</label>
+        <label for="id_pasar">ID Pasar <span class="text-danger">*</span></label>
         <input type="number" name="id_pasar"
-            class="form-control form-control-sm @error('id_pasar') is-invalid @enderror" required
+            class="form-control form-control-sm @error('id_pasar') is-invalid @enderror" 
             value="{{ old('id_pasar', $customer->id_pasar ?? '') }}">
         @error('id_pasar')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
 
-    <div class="col-md-3 mb-2">
-        <label for="nama_pasar">Nama Pasar</label>
+    <div class="col-md-6 mb-2">
+        <label for="nama_pasar">Nama Pasar <span class="text-danger">*</span></label>
         <input type="text" name="nama_pasar"
-            class="form-control form-control-sm @error('nama_pasar') is-invalid @enderror" required
+            class="form-control form-control-sm @error('nama_pasar') is-invalid @enderror" 
             value="{{ old('nama_pasar', $customer->nama_pasar ?? '') }}">
         @error('nama_pasar')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
 
-    <div class="col-md-6 mb-2">
-        <label for="tipe_outlet">Tipe Outlet</label>
+    <div class="col-md-3 mb-2">
+        <label for="tipe_outlet">Tipe Outlet <span class="text-danger">*</span></label>
         <select name="tipe_outlet" class="form-control form-control-sm @error('tipe_outlet') is-invalid @enderror"
-            required>
+            >
             <option value="">-- Pilih Tipe --</option>
             @foreach (['retail', 'grosir'] as $tipe)
                 <option value="{{ $tipe }}"

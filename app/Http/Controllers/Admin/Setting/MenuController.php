@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Yajra\DataTables\Facades\DataTables;
 
 class MenuController extends Controller
 {
@@ -32,14 +33,25 @@ class MenuController extends Controller
         return view('setting.menus.index', compact('menus', 'menu_id'));
     }
 
-    public function show($id)
+    public function data()
     {
+        $activeMenu = currentMenu(); // helper dari AppServiceProvider
+        $query = Menu::select('id', 'title', 'route', 'icon', 'order');
+        return DataTables::of($query)
+            ->addIndexColumn()
+            // ->addColumn('nama', fn ($row) => $row->nama)
+            ->addColumn('can_edit', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'edit'))
+            ->addColumn('can_delete', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'destroy'))
+            ->addColumn('edit_url', fn($row) => route('menus.edit', $row->id))
+            ->addColumn('delete_url', fn($row) => route('menus.destroy', $row->id))
+            ->make(true);
     }
+
+    public function show($id) {}
 
     // Di controller (method create)
     public function create()
     {
-        // Misalnya hanya ambil menu utama (tanpa parent)
         $parentMenus = Menu::orderBy('order')->whereNull('route')->get();
         return view('setting.menus.create', compact('parentMenus'));
     }
@@ -79,7 +91,8 @@ class MenuController extends Controller
 
     public function edit(Menu $menu)
     {
-        return view('setting.menus.edit', compact('menu'));
+        $parentMenus = Menu::orderBy('order')->whereNull('route')->get();
+        return view('setting.menus.edit', compact('menu', 'parentMenus'));
     }
 
     public function update(Request $request, Menu $menu)
@@ -89,6 +102,7 @@ class MenuController extends Controller
             'route' => 'nullable|string|max:255',
             'icon' => 'string|nullable|max:255',
             'order' => 'required|integer',
+            'parent_id' => 'nullable|exists:menus,id',
         ]);
 
         DB::beginTransaction();
@@ -98,6 +112,7 @@ class MenuController extends Controller
                 'route' => $validatedData['route'],
                 'icon' => $validatedData['icon'],
                 'order' => $validatedData['order'],
+                'parent_id' => $validatedData['parent_id'] ?? null,
             ]);
 
             DB::commit();

@@ -179,6 +179,9 @@ Route::prefix('menus')
         Route::get('/', [MenuController::class, 'index'])
             ->name('menus.index')
             ->middleware('menu.permission:index');
+        Route::get('/data', [MenuController::class, 'data'])
+            ->name(name: 'menus.data')
+            ->middleware('menu.permission:index');
         Route::get('/approve/{menu}', [MenuController::class, 'approve'])
             ->name('menus.approve')
             ->middleware('menu.permission:approve');

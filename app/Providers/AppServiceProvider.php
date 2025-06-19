@@ -74,10 +74,10 @@ class AppServiceProvider extends ServiceProvider
             $route = Str::before(Route::currentRouteName(), '.');
             $menu  = Cache::rememberForever(
                 "menu_{$route}",
-                fn () =>
+                fn() =>
                 Menu::where('route', $route)->first()
             );
-            $view->with('menu', $menu);
+            $view->with('activeMenu', $menu);
         });
     }
 }

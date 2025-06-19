@@ -55,6 +55,7 @@ class DeliveryOrdersPage {
                     orderable: false,
                     searchable: false,
                 },
+                { data: "id", name: "id", visible: false },
                 {
                     data: "no_do",
                     name: "no_do",
@@ -229,7 +230,7 @@ class DeliveryOrdersPage {
                 [20, 50, -1],
                 [20, 50, "Semua"],
             ],
-            order: [],
+            order: [[1, 'desc']],
             columnDefs: [
                 {
                     targets: 0, // Menargetkan kolom pertama

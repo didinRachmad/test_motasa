@@ -34,10 +34,10 @@
     <div class="col-md-4" id="so-select-wrapper"
         data-get-sales-order-url="{{ route('transaksi_sales_orders.getSalesOrders') }}"
         data-get-sales-order-detail-url="{{ route('transaksi_sales_orders.getSalesOrderDetail', ['salesOrder' => '__ID__']) }}">
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="selectSalesOrder">Sales Order</label>
             <select id="selectSalesOrder" name="sales_order_id"
-                class="form-select form-select-sm @error('sales_order_id') is-invalid @enderror" required>
+                class="form-select form-select-sm @error('sales_order_id') is-invalid @enderror" >
                 @if (isset($salesOrder->id))
                     <option value="{{ $salesOrder->id }}" selected>
                         {{ $salesOrder->no_so }} – {{ $salesOrder->customer->nama_toko }}
@@ -54,7 +54,7 @@
         <label for="tanggal">Tanggal Kirim</label>
         <input type="date" id="tanggal" name="tanggal"
             class="form-control form-control-sm @error('tanggal') is-invalid @enderror"
-            value="{{ old('tanggal', $tanggal) }}" required>
+            value="{{ old('tanggal', $tanggal) }}" >
         @error('tanggal')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
@@ -105,7 +105,7 @@
         <div class="col-md-6">
             <label for="origin">Asal Pengiriman</label>
             <select id="origin" name="origin"
-                class="form-select form-select-sm area-select @error('origin') is-invalid @enderror" required>
+                class="form-select form-select-sm area-select @error('origin') is-invalid @enderror" >
                 @if (old('origin', $origin))
                     <option value="{{ old('origin', $origin) }}" selected>
                         {{ old('origin_name', $origin_name) }}
@@ -123,7 +123,7 @@
         <div class="col-md-6">
             <label for="destination">Tujuan Pengiriman</label>
             <select id="destination" name="destination"
-                class="form-select form-select-sm area-select @error('destination') is-invalid @enderror" required>
+                class="form-select form-select-sm area-select @error('destination') is-invalid @enderror" >
                 @if (old('destination', $destination))
                     <option value="{{ old('destination', $destination) }}" selected>
                         {{ old('destination_name', $destination_name) }}

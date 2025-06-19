@@ -62,33 +62,44 @@ const handleConfirmationClick = (e) => {
     if (!btn) return;
     const form = btn.closest("form");
 
+    // Fungsi untuk trigger submit alami
+    const triggerSubmit = () => {
+        // Buat tombol submit tersembunyi, trigger klik
+        const tempBtn = document.createElement("button");
+        tempBtn.type = "submit";
+        tempBtn.style.display = "none";
+        form.appendChild(tempBtn);
+        tempBtn.click();
+        tempBtn.remove();
+    };
+
     const config = [
         [
             "btn-submit",
             "Konfirmasi Penyimpanan",
             "Periksa kembali inputan anda sebelum menyimpan!",
-            () => form.submit(),
+            triggerSubmit,
             "submit",
         ],
         [
             "btn-delete",
             "Konfirmasi Penghapusan",
             "Data yang dihapus tidak dapat dikembalikan!",
-            () => form.submit(),
+            triggerSubmit,
             "delete",
         ],
         [
             "btn-approve",
             "Apakah Anda yakin?",
             "Harap periksa kembali sebelum melakukan approve data!",
-            () => form.submit(),
+            triggerSubmit,
             "submit",
         ],
         [
             "btn-reset-password",
             "Apakah Anda yakin?",
             "Password akan direset ke data awal!",
-            () => form.submit(),
+            triggerSubmit,
             "default",
         ],
     ];
@@ -109,12 +120,13 @@ const handleConfirmationClick = (e) => {
         const txt = isRevisi
             ? "Data item akan dikembalikan untuk proses revisi, silakan tambahkan keterangan!"
             : "Data item akan direject! Silakan tambahkan alasan reject.";
+
         showInputDialog("Apakah Anda yakin?", txt, (keterangan) => {
             form.insertAdjacentHTML(
                 "beforeend",
                 `<input type="hidden" name="keterangan" value="${keterangan}">`
             );
-            form.submit();
+            triggerSubmit(); // pakai submit alami juga
         });
     }
 };
@@ -288,8 +300,10 @@ document.addEventListener("DOMContentLoaded", function () {
     initTooltips();
     document.addEventListener("click", handleConfirmationClick);
     initSearch();
+    // const autoNumericFields = [];
+
     document.querySelectorAll("input.numeric").forEach((el) => {
-        new AutoNumeric(el, {
+        const an = new AutoNumeric(el, {
             digitGroupSeparator: ".",
             decimalCharacter: ",",
             decimalPlaces: 0,
@@ -297,5 +311,18 @@ document.addEventListener("DOMContentLoaded", function () {
             modifyValueOnWheel: false,
             selectNumberOnlyOnFocus: true,
         });
+
+        // Simpan instance-nya agar bisa dipanggil saat submit
+        // autoNumericFields.push(an);
     });
+
+    // const form = document.querySelector("form");
+    // if (form) {
+    //     form.addEventListener("submit", function (e) {
+    //         autoNumericFields.forEach((an) => {
+    //             const el = an.node();
+    //             el.value = an.getNumber();
+    //         });
+    //     });
+    // }
 });

@@ -49,6 +49,7 @@ class SalesOrdersPage {
                     orderable: false,
                     searchable: false,
                 },
+                { data: "id", name: "id", visible: false },
                 { data: "no_so", name: "no_so", className: "text-center" },
                 { data: "tanggal", name: "tanggal" },
                 { data: "customer", name: "customer" },
@@ -57,7 +58,12 @@ class SalesOrdersPage {
                     name: "metode_pembayaran",
                     className: "text-center",
                 },
-                { data: "total_qty", name: "total_qty", className: "text-end" },
+                {
+                    data: "total_qty",
+                    name: "total_qty",
+                    className: "text-end",
+                    render: $.fn.dataTable.render.number(".", ",", 0),
+                },
                 {
                     data: "total_diskon",
                     name: "total_diskon",
@@ -195,7 +201,7 @@ class SalesOrdersPage {
                 [20, 50, -1],
                 [20, 50, "Semua"],
             ],
-            order: [],
+            order: [[1, 'desc']],
             info: true,
             language: {
                 sEmptyTable: "Tidak ada data yang tersedia di tabel",
@@ -293,7 +299,10 @@ class SalesOrdersPage {
             totalGrand = 0;
         document.querySelectorAll(".product-row").forEach((row) => {
             const harga = parseFloat(row.dataset.harga);
-            const qty = parseInt(row.querySelector(".qty-input").value) || 0;
+            const qty =
+                AutoNumeric.getAutoNumericElement(
+                    row.querySelector(".qty-input")
+                )?.getNumber() ?? 0;
             const total = harga * qty;
             const diskon = qty >= 20 ? total * 0.05 : 0;
             const subtotal = total - diskon;

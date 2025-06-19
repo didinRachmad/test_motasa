@@ -24,23 +24,35 @@ class UserManagementController extends Controller
 
     public function data()
     {
-        $menu = currentMenu(); // helper dari AppServiceProvider
+        $activeMenu = currentMenu(); // helper dari AppServiceProvider
+
+        $sub = DB::table('model_has_roles')
+            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+            ->select('model_has_roles.model_id', DB::raw("GROUP_CONCAT(roles.name SEPARATOR ', ') as roles_text"))
+            ->groupBy('model_has_roles.model_id');
 
         $query = User::query()
-            ->select('users.id', 'users.name', 'users.email')
-            ->with('roles');
+            ->select('users.id', 'users.name', 'users.email', 'role_summary.roles_text')
+            ->leftJoinSub($sub, 'role_summary', function ($join) {
+                $join->on('users.id', '=', 'role_summary.model_id');
+            });
 
         return DataTables::of($query)
             ->addIndexColumn()
-            ->addColumn('roles', function ($row) {
-                return $row->roles->pluck('name')->implode(', '); // Ambil nama role dan gabungkan
+            ->editColumn('roles', fn($row) => $row->roles_text)
+            ->filterColumn('roles', function ($query, $keyword) {
+                $query->whereRaw("role_summary.roles_text LIKE ?", ["%{$keyword}%"]);
             })
-            ->addColumn('can_reset_password', fn ($row) => Auth::user()->hasMenuPermission($menu->id, 'edit'))
-            ->addColumn('can_edit', fn ($row) => Auth::user()->hasMenuPermission($menu->id, 'edit'))
-            ->addColumn('can_delete', fn ($row) => Auth::user()->hasMenuPermission($menu->id, 'destroy'))
-            ->addColumn('reset_password_url', fn ($row) => route('users.reset-password', $row->id))
-            ->addColumn('edit_url', fn ($row) => route('users.edit', $row->id))
-            ->addColumn('delete_url', fn ($row) => route('users.destroy', $row->id))
+            ->orderColumn('roles', function ($query, $order) {
+                $query->orderByRaw("role_summary.roles_text $order");
+            })
+
+            ->addColumn('can_reset_password', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'edit'))
+            ->addColumn('can_edit', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'edit'))
+            ->addColumn('can_delete', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'destroy'))
+            ->addColumn('reset_password_url', fn($row) => route('users.reset-password', $row->id))
+            ->addColumn('edit_url', fn($row) => route('users.edit', $row->id))
+            ->addColumn('delete_url', fn($row) => route('users.destroy', $row->id))
             ->make(true);
     }
 
@@ -86,7 +98,8 @@ class UserManagementController extends Controller
 
     public function edit(User $user)
     {
-        return view('setting.users.edit', compact('user'));
+        $roles = Role::all();
+        return view('setting.users.edit', compact('user', 'roles'));
     }
 
     public function update(Request $request, User $user)

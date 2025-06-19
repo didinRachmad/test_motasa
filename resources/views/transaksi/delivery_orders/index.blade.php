@@ -7,7 +7,7 @@
 
 @section('dashboard-content')
     <x-breadcrumbs>
-        @if (Auth::user()->hasMenuPermission($menu->id, 'create'))
+        @if (Auth::user()->hasMenuPermission($activeMenu->id, 'create'))
             <a class="btn btn-sm rounded-4 btn-primary shadow-sm" href="{{ route('transaksi_delivery_orders.create') }}">
                 <i class="bi bi-plus-circle-fill"></i> Tambah Data
             </a>

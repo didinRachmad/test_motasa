@@ -17,6 +17,7 @@ export default {
                     orderable: false,
                     searchable: false,
                 },
+                { data: "id", name: "id", visible: false },
                 { data: "kode_customer", name: "kode_customer" },
                 { data: "nama_toko", name: "nama_toko" },
                 { data: "pemilik", name: "pemilik" },
@@ -61,7 +62,7 @@ export default {
                 [20, 50, -1],
                 [20, 50, "Semua"],
             ],
-            order: [],
+            order: [[1, 'desc']],
             columnDefs: [
                 {
                     targets: 0, // Menargetkan kolom pertama

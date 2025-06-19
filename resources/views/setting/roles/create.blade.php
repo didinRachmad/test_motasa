@@ -14,11 +14,7 @@
                 <h5 class="card-title" id="addModalLabel">Tambah Data</h5>
             </div>
             <div class="card-body">
-                <div class="form-group">
-                    <label for="name">Nama Role <span class="text-danger">*</span></label>
-                    <input type="text" id="name" name="name" class="form-control form-control-sm"
-                        value="{{ old('name') }}" required>
-                </div>
+                @include('setting.roles._form')
             </div>
             <div class="card-footer d-flex justify-content-between align-items-center">
                 <a href="{{ route('roles.index') }}" class="btn btn-sm rounded-4 btn-secondary">Batal <i

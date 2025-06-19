@@ -28,8 +28,8 @@ class SalesOrdersController extends Controller
 
     public function data()
     {
-        $menu = currentMenu(); // helper dari AppServiceProvider
-        $module = Str::before($menu->route, '.');
+        $activeMenu = currentMenu(); // helper dari AppServiceProvider
+        $module = Str::before($activeMenu->route, '.');
         $role = Auth::user()->roles->first();
         if (!$role) {
             abort(403, 'User tidak memiliki role');
@@ -69,6 +69,12 @@ class SalesOrdersController extends Controller
             ->addIndexColumn()
             ->editColumn('tanggal', fn($row) => Carbon::parse($row->tanggal)->format('d/m/Y'))
             ->orderColumn('tanggal', 'tanggal $1')
+            ->orderColumn('customer', function ($query, $order) {
+                $query->orderByRaw("CONCAT(customers.kode_customer, ' - ', customers.nama_toko) $order");
+            })
+            ->filterColumn('customer', function ($query, $keyword) {
+                $query->whereRaw("LOWER(CONCAT(customers.kode_customer, ' - ', customers.nama_toko)) LIKE ?", ["%" . strtolower($keyword) . "%"]);
+            })
 
             ->addColumn('approval_level', fn($row) => $row->approval_level)
             ->addColumn('approval_sequence', fn($row) => $approvalRoute->sequence ?? 0)
@@ -79,8 +85,8 @@ class SalesOrdersController extends Controller
             ->addColumn('approve_url', fn($row) => route('transaksi_sales_orders.approve', $row->id))
             ->addColumn('reject_url', fn($row) => route('transaksi_sales_orders.reject', $row->id))
 
-            ->addColumn('can_show', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'show'))
-            ->addColumn('can_print', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'print'))
+            ->addColumn('can_show', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'show'))
+            ->addColumn('can_print', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'print'))
             ->addColumn('can_approve', function ($row) use ($approvalRoutes) {
                 return $approvalRoutes->contains(function ($route) use ($row) {
                     return $row->approval_level == $route->sequence - 1
@@ -89,8 +95,8 @@ class SalesOrdersController extends Controller
                 });
             })
             ->addColumn('can_modify', fn($row) => $row->approval_level == 0)
-            ->addColumn('can_edit', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'edit'))
-            ->addColumn('can_delete', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'destroy'))
+            ->addColumn('can_edit', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'edit'))
+            ->addColumn('can_delete', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'destroy'))
             ->addColumn('edit_url', fn($row) => route('transaksi_sales_orders.edit', $row->id))
             ->addColumn('delete_url', fn($row) => route('transaksi_sales_orders.destroy', $row->id))
             ->make(true);
@@ -122,7 +128,6 @@ class SalesOrdersController extends Controller
             'metode_pembayaran'  => 'required|in:Tunai,Transfer',
             'detail'             => 'required|array',
             'detail.*.product_id' => 'required|exists:products,id',
-            'detail.*.qty'       => 'nullable|integer|min:0',
         ]);
 
         DB::beginTransaction();
@@ -279,8 +284,8 @@ class SalesOrdersController extends Controller
 
     public function approve(SalesOrder $salesOrder)
     {
-        $menu = currentMenu(); // ambil menu dari helper
-        $module = Str::before($menu->route, '.'); // e.g. 'transaksi_sales_orders'
+        $activeMenu = currentMenu(); // ambil menu dari helper
+        $module = Str::before($activeMenu->route, '.'); // e.g. 'transaksi_sales_orders'
         $role = Auth::user()->roles->first();
 
         if (!$role) {
@@ -321,7 +326,7 @@ class SalesOrdersController extends Controller
         $salesOrder->save();
 
         session()->flash('success', 'Sales Order berhasil di-approve.');
-        return redirect()->route($menu->route . ".index"); // arahkan ke index sesuai modul
+        return redirect()->route($activeMenu->route . ".index"); // arahkan ke index sesuai modul
     }
 
 

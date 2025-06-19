@@ -28,8 +28,8 @@ class DeliveryOrdersController extends Controller
 
     public function data()
     {
-        $menu = currentMenu(); // helper dari AppServiceProvider
-        $module = Str::before($menu->route, '.');
+        $activeMenu = currentMenu(); // helper dari AppServiceProvider
+        $module = Str::before($activeMenu->route, '.');
         $role = Auth::user()->roles->first();
         if (!$role) {
             abort(403, 'User tidak memiliki role');
@@ -81,8 +81,8 @@ class DeliveryOrdersController extends Controller
             ->addColumn('approve_url', fn($row) => route('transaksi_delivery_orders.approve', $row->id))
             ->addColumn('reject_url', fn($row) => route('transaksi_delivery_orders.reject', $row->id))
 
-            ->addColumn('can_show', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'show'))
-            ->addColumn('can_print', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'print'))
+            ->addColumn('can_show', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'show'))
+            ->addColumn('can_print', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'print'))
             ->addColumn('can_approve', function ($row) use ($approvalRoutes) {
                 return $approvalRoutes->contains(function ($route) use ($row) {
                     return $row->approval_level == $route->sequence - 1
@@ -91,8 +91,8 @@ class DeliveryOrdersController extends Controller
                 });
             })
             ->addColumn('can_modify', fn($row) => $row->approval_level == 0)
-            ->addColumn('can_edit', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'edit'))
-            ->addColumn('can_delete', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'destroy'))
+            ->addColumn('can_edit', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'edit'))
+            ->addColumn('can_delete', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'destroy'))
             ->addColumn('edit_url', fn($row) => route('transaksi_delivery_orders.edit', $row->id))
             ->addColumn('delete_url', fn($row) => route('transaksi_delivery_orders.destroy', $row->id))
             ->make(true);
@@ -353,8 +353,8 @@ class DeliveryOrdersController extends Controller
 
     public function approve(DeliveryOrder $deliveryOrder)
     {
-        $menu = currentMenu(); // ambil menu dari helper
-        $module = Str::before($menu->route, '.'); // e.g. 'transaksi_delivery_orders'
+        $activeMenu = currentMenu(); // ambil menu dari helper
+        $module = Str::before($activeMenu->route, '.'); // e.g. 'transaksi_delivery_orders'
         $role = Auth::user()->roles->first();
 
         if (!$role) {
@@ -395,7 +395,7 @@ class DeliveryOrdersController extends Controller
         $deliveryOrder->save();
 
         session()->flash('success', 'Delivery Order berhasil di-approve.');
-        return redirect()->route($menu->route . ".index"); // arahkan ke index sesuai modul
+        return redirect()->route($activeMenu->route . ".index"); // arahkan ke index sesuai modul
     }
 
 

@@ -26,7 +26,7 @@ class ApprovalRouteController extends Controller
 
     public function data()
     {
-        $menu = currentMenu(); // helper dari AppServiceProvider
+        $activeMenu = currentMenu(); // helper dari AppServiceProvider
         $query = ApprovalRoute::select(
             'approval_routes.id as id',
             'approval_routes.module as module',
@@ -35,15 +35,13 @@ class ApprovalRouteController extends Controller
             'users.email as assigned_user'
         )
             ->leftJoin('roles', 'roles.id', '=', 'approval_routes.role_id')
-            ->leftJoin('users', 'users.id', '=', 'approval_routes.assigned_user_id')
-            ->orderBy('module')
-            ->orderBy('sequence');
+            ->leftJoin('users', 'users.id', '=', 'approval_routes.assigned_user_id');
 
         return DataTables::of($query)
             ->addIndexColumn()
             // ->addColumn('nama', fn ($row) => $row->nama)
-            ->addColumn('can_edit', fn ($row) => Auth::user()->hasMenuPermission($menu->id, 'edit'))
-            ->addColumn('can_delete', fn ($row) => Auth::user()->hasMenuPermission($menu->id, 'destroy'))
+            ->addColumn('can_edit', fn ($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'edit'))
+            ->addColumn('can_delete', fn ($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'destroy'))
             ->addColumn('edit_url', fn ($row) => route('approval_routes.edit', $row->id))
             ->addColumn('delete_url', fn ($row) => route('approval_routes.destroy', $row->id))
             ->make(true);

@@ -22,14 +22,14 @@ class ProductsController extends Controller
 
     public function data()
     {
-        $menu = currentMenu(); // helper dari AppServiceProvider
+        $activeMenu = currentMenu(); // helper dari AppServiceProvider
         $query = Product::select('id', 'kode_produk', 'nama_produk', 'harga', 'kemasan');
 
         return DataTables::of($query)
             ->addIndexColumn()
             // ->addColumn('nama', fn ($row) => $row->nama)
-            ->addColumn('can_edit', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'edit'))
-            ->addColumn('can_delete', fn($row) => Auth::user()->hasMenuPermission($menu->id, 'destroy'))
+            ->addColumn('can_edit', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'edit'))
+            ->addColumn('can_delete', fn($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'destroy'))
             ->addColumn('edit_url', fn($row) => route('master_products.edit', $row->id))
             ->addColumn('delete_url', fn($row) => route('master_products.destroy', $row->id))
             ->make(true);

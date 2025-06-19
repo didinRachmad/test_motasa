@@ -26,15 +26,15 @@ class RoleController extends Controller
 
     public function data()
     {
-        $menu = currentMenu(); // helper dari AppServiceProvider
+        $activeMenu = currentMenu(); // helper dari AppServiceProvider
         $query = Role::select('id', 'name');
 
         return DataTables::of($query)
             ->addIndexColumn()
             // ->addColumn('nama', fn ($row) => $row->nama)
-            ->addColumn('can_edit_permission', fn ($row) => Auth::user()->hasMenuPermission($menu->id, 'edit'))
-            ->addColumn('can_edit', fn ($row) => Auth::user()->hasMenuPermission($menu->id, 'edit'))
-            ->addColumn('can_delete', fn ($row) => Auth::user()->hasMenuPermission($menu->id, 'destroy'))
+            ->addColumn('can_edit_permission', fn ($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'edit'))
+            ->addColumn('can_edit', fn ($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'edit'))
+            ->addColumn('can_delete', fn ($row) => Auth::user()->hasMenuPermission($activeMenu->id, 'destroy'))
             ->addColumn('edit_permission_url', fn ($row) => route('roles.menu-permissions', $row->id))
             ->addColumn('edit_url', fn ($row) => route('roles.edit', $row->id))
             ->addColumn('delete_url', fn ($row) => route('roles.destroy', $row->id))
